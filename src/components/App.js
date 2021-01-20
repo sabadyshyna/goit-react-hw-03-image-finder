@@ -43,15 +43,16 @@ class App extends Component {
   getImages = () => {
     const { query, page } = this.state;
 
+    if (query === '') {
+      toast.warning('Enter valid query.');
+      return;
+    }
+
     this.toggleLoader();
 
     return imagesAPI
       .fetchImages(query, page)
       .then(({ hits, total }) => {
-        // if (query === '') {
-        //   toast.warning('Enter valid query.');
-        //   return;
-        // }
         this.scrollTo();
 
         if (total === 0) {
@@ -100,22 +101,39 @@ class App extends Component {
     }, 1000);
   };
 
-  onCloseModal = () => {
-    this.setState(({ showModal }) => ({
-      showModal: !showModal,
-    }));
-  };
+  // onCloseModal = () => {
+  //   this.setState(({ showModal }) => ({
+  //     showModal: !showModal,
+  //   }));
+  // };
 
+  // onOpenModal = e => {
+  //   const { source } = e.target.dataset;
+  //   const { alt } = e.target;
+
+  //   this.setState({
+  //     largeImageURL: source,
+  //     alt: alt,
+  //   });
+
+  //   this.onCloseModal();
+  // };
+
+  onCloseModal = () => {
+    this.setState({
+      showModal: false,
+      largeImageURL: '',
+      alt: '',
+    });
+  };
   onOpenModal = e => {
     const { source } = e.target.dataset;
     const { alt } = e.target;
-
     this.setState({
+      showModal: true,
       largeImageURL: source,
       alt: alt,
     });
-
-    this.onCloseModal();
   };
 
   render() {
@@ -133,7 +151,9 @@ class App extends Component {
         <Searchbar onSubmit={this.handleFormSubmit} />
         <ImageGallery images={images} onOpenModal={this.onOpenModal} />
         {isLoading && <Loader />}
-        {totalImages > 11 && <Button onLoadMore={this.onLoadMore} />}
+        {!isLoading && totalImages > 11 && (
+          <Button onLoadMore={this.onLoadMore} />
+        )}
         {showModal && (
           <Modal
             largeImageURL={largeImageURL}
