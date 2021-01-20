@@ -29,6 +29,10 @@ class App extends Component {
       page: 1,
       totalImages: 0,
     });
+    if (query === '') {
+      toast.warning('Enter valid query.');
+      return;
+    }
   };
 
   componentDidUpdate(prevProps, prevState) {
