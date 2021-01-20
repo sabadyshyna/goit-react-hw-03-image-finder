@@ -24,7 +24,6 @@ export default class Searchbar extends Component {
 
   render() {
     const { query } = this.state;
-    console.log(query);
     return (
       <header className={s.Searchbar}>
         <form className={s.SearchForm} onSubmit={this.handleSubmit}>
