@@ -48,10 +48,11 @@ class App extends Component {
     return imagesAPI
       .fetchImages(query, page)
       .then(({ hits, total }) => {
-        if (query === ' ') {
-          toast.warning('Enter valid query.');
-          return;
-        }
+        // if (query === '') {
+        //   toast.warning('Enter valid query.');
+        //   return;
+        // }
+        this.scrollTo();
 
         if (total === 0) {
           toast.dark('Nothing was found. Enter another query.');
@@ -73,7 +74,7 @@ class App extends Component {
   };
 
   handleChangePage = () => {
-    this.setState(({ page }) => ({ page: page + 1 }));
+    this.setState(({ page }) => ({ page: page + 1 }), this.getImages);
   };
 
   toggleLoader = () => {
@@ -85,11 +86,9 @@ class App extends Component {
   onLoadMore = () => {
     this.handleChangePage();
 
-    setTimeout(() => {
-      this.getImages();
-    }, 400);
-
-    this.scrollTo();
+    // setTimeout(() => {
+    //   this.getImages();
+    // }, 400);
   };
 
   scrollTo = () => {
@@ -101,7 +100,7 @@ class App extends Component {
     }, 1000);
   };
 
-  toggleModal = () => {
+  onCloseModal = () => {
     this.setState(({ showModal }) => ({
       showModal: !showModal,
     }));
@@ -116,14 +115,12 @@ class App extends Component {
       alt: alt,
     });
 
-    this.toggleModal();
+    this.onCloseModal();
   };
 
   render() {
     const {
-      query,
       images,
-      page,
       largeImageURL,
       alt,
       isLoading,
@@ -134,19 +131,14 @@ class App extends Component {
     return (
       <Container>
         <Searchbar onSubmit={this.handleFormSubmit} />
-        <ImageGallery
-          query={query}
-          page={page}
-          images={images}
-          onOpenModal={this.onOpenModal}
-        />
+        <ImageGallery images={images} onOpenModal={this.onOpenModal} />
         {isLoading && <Loader />}
         {totalImages > 11 && <Button onLoadMore={this.onLoadMore} />}
         {showModal && (
           <Modal
             largeImageURL={largeImageURL}
             alt={alt}
-            onClose={this.toggleModal}
+            onClose={this.onCloseModal}
           />
         )}
         <ToastContainer
